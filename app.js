@@ -7,10 +7,16 @@ const { requestLogger } = require('./middlewares/requestLogger')
 //routers
 const { routerAPI } = require('./routers/routerAPI')
 const { routerUI } = require('./routers/routerUI')
-
+const bodyParser = require('body-parser')
 
 //instance of express
 const app = express()
+
+// parse application/x-www-form-urlencoded 
+//post method body parsing
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
 
 app.set('view engine', 'pug')
 
