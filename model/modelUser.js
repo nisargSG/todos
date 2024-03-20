@@ -1,39 +1,30 @@
 const  {getDBConnection}  = require('../utils')
 const libMongoDB = require('mongodb')
 
-const getSingleUser = (req,res,next)=>{
+const getUserById = (dbConnection,userId)=>{
 
-    getDBConnection().then(async (dbToDo)=>{
-        const searchId=req.params.id;
-        const foundUser = await dbToDo.collection("users").findOne({_id:new libMongoDB.ObjectId(searchId)})
-        res.status(200).json({"data":foundUser})
-
+    dbConnection.then(async (dbToDo)=>{
+        const foundUser = await dbToDo.collection("users").findOne({_id:new libMongoDB.ObjectId(userId)})
+        return({"data":foundUser})
+       
     }).catch((e)=>{
         console.log(e+"Error")
-        res.status(500).json({"error":"failed to load data"})
+        return {"error":"failed to load data"}
     })
-
-
 }
 
-
-
 const getAllUsers = (req,res,next)=>{
-    
     getDBConnection().then(async (dbToDo)=>{
         const usersData=await dbToDo.collection("users").find().toArray()
         console.log(usersData)
         res.status(200).json({"data":usersData})
-
     }).catch((e)=>{
         console.log("Error")
         res.status(500).json({"error":"failed to load data"})
     });
-
 }
 
 const createUser = (req,res,next)=>{
-
     getDBConnection().then(async (dbToDo)=>{
         await dbToDo.collection("users").insertOne(req.body)
         res.status(200).json({"success":"data inserted"})
@@ -52,8 +43,6 @@ const updateUser = (req,res,next)=>{
         console.log("Error")
         res.status(500).json({"error":"failed to update data"})
     });
-
-
 }
 
 const deleteUser = (req,res,next)=>{

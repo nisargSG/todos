@@ -25,11 +25,10 @@ app.set('view engine', 'pug')
 
 app.use(requestLogger)
 
-//Api Router
+//API Routes
 app.use("/api", routerAPI)
-//Web page
+//UI Routes
 app.use(routerUI)
-//Web page
 
 getDBConnection().then((dbToDo)=>{
   console.log(chalk.green("[+]DB is Connected"))
