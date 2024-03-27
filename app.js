@@ -1,40 +1,15 @@
-const { appConfig } = require('./package.json')
-const express = require("express")
-const  {getDBConnection}  = require('./utils')
-const chalk = require('chalk');
-//middlewars
-const { requestLogger } = require('./middlewares/requestLogger')
-//routers
-const { routerAPI } = require('./routers/routerAPI')
-const { routerUI } = require('./routers/routerUI')
-const bodyParser = require('body-parser')
+//init params
+require('dotenv').config();
+//express
+const express = require("express");
+//util
+const util = require('./util');
+//middlwares
+const requestInterceptor= require('./middleware/requestInterceptor');
+//Express APP
+const app = express();
+//Assign Middlewares
+app.use(requestInterceptor)
+//Start Exporess APP
+app.listen(process.env.APP_PORT, () => util.logger(`Example app listening on port ${process.env.APP_PORT}`,"success"));
 
-//instance of express
-const app = express()
-
-// parse application/x-www-form-urlencoded 
-//post method body parsing
-app.use(bodyParser.urlencoded({ extended: false }))
-// parse application/json
-app.use(bodyParser.json())
-
-app.set('view engine', 'pug')
-
-//in case you want to change view directory
-//app.set('views', libPath.join(__dirname, '/templates'));
-
-app.use(requestLogger)
-
-//API Routes
-app.use("/api", routerAPI)
-//UI Routes
-app.use(routerUI)
-
-getDBConnection().then((dbToDo)=>{
-  console.log(chalk.green("[+]DB is Connected"))
-  app.listen(appConfig.port, () => {
-    console.log(chalk.green(`[+]App is Running on Port ${appConfig.port}`))
-  })
-}).catch((e)=>{
-  console.log(chalk.red(`[-]DB Connection Failed ${e}`))
-})
